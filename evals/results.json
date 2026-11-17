@@ -1,0 +1,936 @@
+{
+  "schema_version": "1.0",
+  "app_version": "0.1.0",
+  "generated_at": "2026-11-17T13:18:27+00:00",
+  "duration_ms": 633.8,
+  "corpus_sha256": "9cecefc55c61f43391f08f0afd0fbd50310151ae5c2affecbd9252d30b4b16a9",
+  "gate_config_hash": "200ec1ef92c818f69b32904733cb6403220ca0eece18aa4de55f1740712b6f9d",
+  "cases_sha256": "946e9ebf563dd4d49a0defb6a745710c3f3ddaad1e537fda342f9b409efe589d",
+  "environment": {
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "summary": {
+    "total": 14,
+    "passed": 14,
+    "failed": 0,
+    "all_passed": true
+  },
+  "splits": {
+    "dev": {
+      "total": 8,
+      "passed": 8
+    },
+    "holdout": {
+      "total": 6,
+      "passed": 6
+    }
+  },
+  "cases": [
+    {
+      "id": "EG-01",
+      "title": "충분한 근거 → 계획 생성, 승인 대기",
+      "split": "dev",
+      "passed": true,
+      "duration_ms": 53.6,
+      "checks": [
+        {
+          "label": "http",
+          "expected": 201,
+          "actual": 201,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "PENDING_APPROVAL",
+          "actual": "PENDING_APPROVAL",
+          "ok": true
+        },
+        {
+          "label": "plan",
+          "expected": true,
+          "actual": true,
+          "ok": true
+        },
+        {
+          "label": "public_valid_min",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "label": "gate_category",
+          "expected": null,
+          "actual": null,
+          "ok": true
+        },
+        {
+          "label": "plans",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "label": "approvals",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "label": "executions",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "EG-02",
+      "title": "부족한 근거 → 계획 없음",
+      "split": "dev",
+      "passed": true,
+      "duration_ms": 30.2,
+      "checks": [
+        {
+          "label": "http",
+          "expected": 201,
+          "actual": 201,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "EVIDENCE_INSUFFICIENT",
+          "actual": "EVIDENCE_INSUFFICIENT",
+          "ok": true
+        },
+        {
+          "label": "plan",
+          "expected": false,
+          "actual": false,
+          "ok": true
+        },
+        {
+          "label": "gate_category",
+          "expected": "low_score",
+          "actual": "low_score",
+          "ok": true
+        },
+        {
+          "label": "plans",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "label": "approvals",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "label": "executions",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "EG-03",
+      "title": "빈 질의 → 검증 오류, run 생성 없음",
+      "split": "dev",
+      "passed": true,
+      "duration_ms": 21.9,
+      "checks": [
+        {
+          "label": "http",
+          "expected": 422,
+          "actual": 422,
+          "ok": true
+        },
+        {
+          "label": "code",
+          "expected": "E_VALIDATION",
+          "actual": "E_VALIDATION",
+          "ok": true
+        },
+        {
+          "label": "no_run",
+          "expected": true,
+          "actual": 0,
+          "ok": true
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "EG-04",
+      "title": "URL 없는 인용 → 게이트 차단",
+      "split": "dev",
+      "passed": true,
+      "duration_ms": 29.3,
+      "checks": [
+        {
+          "label": "http",
+          "expected": 201,
+          "actual": 201,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "EVIDENCE_INSUFFICIENT",
+          "actual": "EVIDENCE_INSUFFICIENT",
+          "ok": true
+        },
+        {
+          "label": "plan",
+          "expected": false,
+          "actual": false,
+          "ok": true
+        },
+        {
+          "label": "gate_category",
+          "expected": "invalid_citation",
+          "actual": "invalid_citation",
+          "ok": true
+        },
+        {
+          "label": "gate_reason_contains",
+          "expected": "출처 URL",
+          "actual": "공개 문서 유효 인용 0개 < 필요 2개입니다. (합성 fixture는 최소 인용 수에 포함하지 않습니다.); fixture-missing-url: 출처 URL이 없습니다. 공개 문서 유효 인용 0개 < 필요 2개입니다. (합성 fixture는 최소 인용 수에 포함하지 않습니다.) fixture-missing-url: 출처 URL이 없습니다.",
+          "ok": true
+        },
+        {
+          "label": "plans",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "label": "approvals",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "label": "executions",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "EG-05",
+      "title": "낮은 검색 점수 → 게이트 차단",
+      "split": "dev",
+      "passed": true,
+      "duration_ms": 27.8,
+      "checks": [
+        {
+          "label": "http",
+          "expected": 201,
+          "actual": 201,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "EVIDENCE_INSUFFICIENT",
+          "actual": "EVIDENCE_INSUFFICIENT",
+          "ok": true
+        },
+        {
+          "label": "plan",
+          "expected": false,
+          "actual": false,
+          "ok": true
+        },
+        {
+          "label": "gate_category",
+          "expected": "low_score",
+          "actual": "low_score",
+          "ok": true
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "EG-06",
+      "title": "상충 근거 → 보류 및 사유 기록",
+      "split": "dev",
+      "passed": true,
+      "duration_ms": 30.9,
+      "checks": [
+        {
+          "label": "http",
+          "expected": 201,
+          "actual": 201,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "EVIDENCE_INSUFFICIENT",
+          "actual": "EVIDENCE_INSUFFICIENT",
+          "ok": true
+        },
+        {
+          "label": "plan",
+          "expected": false,
+          "actual": false,
+          "ok": true
+        },
+        {
+          "label": "gate_category",
+          "expected": "conflict",
+          "actual": "conflict",
+          "ok": true
+        },
+        {
+          "label": "gate_reason_contains",
+          "expected": "goods_contract_guarantee_rate",
+          "actual": "동일 정책 키 'goods_contract_guarantee_rate'·범위 '물품'에서 서로 다른 값이 검색되었습니다: 10%(fixture-goods-guarantee-10), 5%(fixture-goods-guarantee-5); 공개 문서 유효 인용 1개 < 필요 2개입니다. (합성 fixture는 최소 인용 수에 포함하지 않습니다.) 동일 정책 키 'goods_contract_guarantee_rate'·범위 '물품'에서 서로 다른 값이 검색되었습니다: 10%(fixture-goods-guarantee-10), 5%(fixture-goods-guarantee-5) 공개 문서 유효 인용 1개 < 필요 2개입니다. (합성 fixture는 최소 인용 수에 포함하지 않습니다.)",
+          "ok": true
+        },
+        {
+          "label": "plans",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "label": "approvals",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "label": "executions",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "EG-07",
+      "title": "승인 전 실행 → 409, execution 없음",
+      "split": "dev",
+      "passed": true,
+      "duration_ms": 42.1,
+      "checks": [
+        {
+          "label": "http",
+          "expected": 201,
+          "actual": 201,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "PENDING_APPROVAL",
+          "actual": "PENDING_APPROVAL",
+          "ok": true
+        },
+        {
+          "label": "http",
+          "expected": 409,
+          "actual": 409,
+          "ok": true
+        },
+        {
+          "label": "code",
+          "expected": "E_STATE_CONFLICT",
+          "actual": "E_STATE_CONFLICT",
+          "ok": true
+        },
+        {
+          "label": "executions",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "PENDING_APPROVAL",
+          "actual": "PENDING_APPROVAL",
+          "ok": true
+        },
+        {
+          "label": "audit_has",
+          "expected": [
+            "DENIED_EXECUTION"
+          ],
+          "actual": [
+            "DENIED_EXECUTION",
+            "EVIDENCE_GATE_PASSED",
+            "EVIDENCE_RETRIEVED",
+            "PLAN_CREATED",
+            "RUN_CREATED",
+            "STATE_TRANSITION"
+          ],
+          "ok": true
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "EG-08",
+      "title": "승인 뒤 mock 실행 → EXECUTED, 감사 기록",
+      "split": "dev",
+      "passed": true,
+      "duration_ms": 55.9,
+      "checks": [
+        {
+          "label": "http",
+          "expected": 201,
+          "actual": 201,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "PENDING_APPROVAL",
+          "actual": "PENDING_APPROVAL",
+          "ok": true
+        },
+        {
+          "label": "http",
+          "expected": 200,
+          "actual": 200,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "APPROVED",
+          "actual": "APPROVED",
+          "ok": true
+        },
+        {
+          "label": "http",
+          "expected": 200,
+          "actual": 200,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "EXECUTED",
+          "actual": "EXECUTED",
+          "ok": true
+        },
+        {
+          "label": "attempts",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "label": "last_attempt_status",
+          "expected": "EXECUTED",
+          "actual": "EXECUTED",
+          "ok": true
+        },
+        {
+          "label": "audit_has",
+          "expected": [
+            "APPROVAL_GRANTED",
+            "EXECUTION_SUCCEEDED"
+          ],
+          "actual": [
+            "APPROVAL_GRANTED",
+            "EVIDENCE_GATE_PASSED",
+            "EVIDENCE_RETRIEVED",
+            "EXECUTION_STARTED",
+            "EXECUTION_SUCCEEDED",
+            "PLAN_CREATED",
+            "RUN_CREATED",
+            "STATE_TRANSITION"
+          ],
+          "ok": true
+        },
+        {
+          "label": "approvals",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "label": "executions",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "EG-09",
+      "title": "mock 2회 실패 → FAILED, 오류 사유 기록",
+      "split": "holdout",
+      "passed": true,
+      "duration_ms": 59.4,
+      "checks": [
+        {
+          "label": "http",
+          "expected": 201,
+          "actual": 201,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "PENDING_APPROVAL",
+          "actual": "PENDING_APPROVAL",
+          "ok": true
+        },
+        {
+          "label": "http",
+          "expected": 200,
+          "actual": 200,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "APPROVED",
+          "actual": "APPROVED",
+          "ok": true
+        },
+        {
+          "label": "http",
+          "expected": 200,
+          "actual": 200,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "FAILED",
+          "actual": "FAILED",
+          "ok": true
+        },
+        {
+          "label": "attempts",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "label": "all_attempts_failed",
+          "expected": true,
+          "actual": true,
+          "ok": true
+        },
+        {
+          "label": "audit_has",
+          "expected": [
+            "EXECUTION_FAILED",
+            "RETRY_SCHEDULED"
+          ],
+          "actual": [
+            "APPROVAL_GRANTED",
+            "EVIDENCE_GATE_PASSED",
+            "EVIDENCE_RETRIEVED",
+            "EXECUTION_FAILED",
+            "EXECUTION_STARTED",
+            "PLAN_CREATED",
+            "RETRY_SCHEDULED",
+            "RUN_CREATED",
+            "STATE_TRANSITION"
+          ],
+          "ok": true
+        },
+        {
+          "label": "executions",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "EG-10",
+      "title": "1회 실패 → 자동 재시도 → EXECUTED, attempt 증가",
+      "split": "holdout",
+      "passed": true,
+      "duration_ms": 60.8,
+      "checks": [
+        {
+          "label": "http",
+          "expected": 201,
+          "actual": 201,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "PENDING_APPROVAL",
+          "actual": "PENDING_APPROVAL",
+          "ok": true
+        },
+        {
+          "label": "http",
+          "expected": 200,
+          "actual": 200,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "APPROVED",
+          "actual": "APPROVED",
+          "ok": true
+        },
+        {
+          "label": "http",
+          "expected": 200,
+          "actual": 200,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "EXECUTED",
+          "actual": "EXECUTED",
+          "ok": true
+        },
+        {
+          "label": "attempts",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "label": "first_attempt_status",
+          "expected": "FAILED",
+          "actual": "FAILED",
+          "ok": true
+        },
+        {
+          "label": "last_attempt_status",
+          "expected": "EXECUTED",
+          "actual": "EXECUTED",
+          "ok": true
+        },
+        {
+          "label": "audit_has",
+          "expected": [
+            "RETRY_SCHEDULED",
+            "EXECUTION_SUCCEEDED"
+          ],
+          "actual": [
+            "APPROVAL_GRANTED",
+            "EVIDENCE_GATE_PASSED",
+            "EVIDENCE_RETRIEVED",
+            "EXECUTION_FAILED",
+            "EXECUTION_STARTED",
+            "EXECUTION_SUCCEEDED",
+            "PLAN_CREATED",
+            "RETRY_SCHEDULED",
+            "RUN_CREATED",
+            "STATE_TRANSITION"
+          ],
+          "ok": true
+        },
+        {
+          "label": "executions",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "EG-11",
+      "title": "중복 idempotency key → 기존 결과 반환",
+      "split": "holdout",
+      "passed": true,
+      "duration_ms": 58.7,
+      "checks": [
+        {
+          "label": "http",
+          "expected": 201,
+          "actual": 201,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "PENDING_APPROVAL",
+          "actual": "PENDING_APPROVAL",
+          "ok": true
+        },
+        {
+          "label": "http",
+          "expected": 200,
+          "actual": 200,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "APPROVED",
+          "actual": "APPROVED",
+          "ok": true
+        },
+        {
+          "label": "http",
+          "expected": 200,
+          "actual": 200,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "EXECUTED",
+          "actual": "EXECUTED",
+          "ok": true
+        },
+        {
+          "label": "replayed",
+          "expected": false,
+          "actual": false,
+          "ok": true
+        },
+        {
+          "label": "http",
+          "expected": 200,
+          "actual": 200,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "EXECUTED",
+          "actual": "EXECUTED",
+          "ok": true
+        },
+        {
+          "label": "replayed",
+          "expected": true,
+          "actual": true,
+          "ok": true
+        },
+        {
+          "label": "attempts",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "label": "executions",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "EG-12",
+      "title": "계획 변조 → plan hash 불일치로 실행 차단",
+      "split": "holdout",
+      "passed": true,
+      "duration_ms": 57.8,
+      "checks": [
+        {
+          "label": "http",
+          "expected": 201,
+          "actual": 201,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "PENDING_APPROVAL",
+          "actual": "PENDING_APPROVAL",
+          "ok": true
+        },
+        {
+          "label": "http",
+          "expected": 200,
+          "actual": 200,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "APPROVED",
+          "actual": "APPROVED",
+          "ok": true
+        },
+        {
+          "label": "http",
+          "expected": 409,
+          "actual": 409,
+          "ok": true
+        },
+        {
+          "label": "code",
+          "expected": "E_PLAN_HASH_MISMATCH",
+          "actual": "E_PLAN_HASH_MISMATCH",
+          "ok": true
+        },
+        {
+          "label": "executions",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "APPROVED",
+          "actual": "APPROVED",
+          "ok": true
+        },
+        {
+          "label": "audit_has",
+          "expected": [
+            "DENIED_EXECUTION"
+          ],
+          "actual": [
+            "APPROVAL_GRANTED",
+            "DENIED_EXECUTION",
+            "EVIDENCE_GATE_PASSED",
+            "EVIDENCE_RETRIEVED",
+            "PLAN_CREATED",
+            "RUN_CREATED",
+            "STATE_TRANSITION"
+          ],
+          "ok": true
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "EG-13",
+      "title": "중복 승인 → 409, approval 1건 유지",
+      "split": "holdout",
+      "passed": true,
+      "duration_ms": 50.3,
+      "checks": [
+        {
+          "label": "http",
+          "expected": 201,
+          "actual": 201,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "PENDING_APPROVAL",
+          "actual": "PENDING_APPROVAL",
+          "ok": true
+        },
+        {
+          "label": "http",
+          "expected": 200,
+          "actual": 200,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "APPROVED",
+          "actual": "APPROVED",
+          "ok": true
+        },
+        {
+          "label": "http",
+          "expected": 409,
+          "actual": 409,
+          "ok": true
+        },
+        {
+          "label": "code",
+          "expected": "E_STATE_CONFLICT",
+          "actual": "E_STATE_CONFLICT",
+          "ok": true
+        },
+        {
+          "label": "approvals",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "label": "executions",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "EG-14",
+      "title": "반려 → REJECTED, 실행 차단",
+      "split": "holdout",
+      "passed": true,
+      "duration_ms": 54.8,
+      "checks": [
+        {
+          "label": "http",
+          "expected": 201,
+          "actual": 201,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "PENDING_APPROVAL",
+          "actual": "PENDING_APPROVAL",
+          "ok": true
+        },
+        {
+          "label": "http",
+          "expected": 200,
+          "actual": 200,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "REJECTED",
+          "actual": "REJECTED",
+          "ok": true
+        },
+        {
+          "label": "http",
+          "expected": 409,
+          "actual": 409,
+          "ok": true
+        },
+        {
+          "label": "code",
+          "expected": "E_STATE_CONFLICT",
+          "actual": "E_STATE_CONFLICT",
+          "ok": true
+        },
+        {
+          "label": "approvals",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "label": "executions",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "label": "status",
+          "expected": "REJECTED",
+          "actual": "REJECTED",
+          "ok": true
+        },
+        {
+          "label": "audit_has",
+          "expected": [
+            "APPROVAL_REJECTED",
+            "DENIED_EXECUTION"
+          ],
+          "actual": [
+            "APPROVAL_REJECTED",
+            "DENIED_EXECUTION",
+            "EVIDENCE_GATE_PASSED",
+            "EVIDENCE_RETRIEVED",
+            "PLAN_CREATED",
+            "RUN_CREATED",
+            "STATE_TRANSITION"
+          ],
+          "ok": true
+        }
+      ],
+      "failure": null
+    }
+  ]
+}

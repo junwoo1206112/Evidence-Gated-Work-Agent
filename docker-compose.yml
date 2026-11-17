@@ -1,0 +1,22 @@
+services:
+  web:
+    build: .
+    ports:
+      - "${EGWA_PORT:-8000}:8000"
+    environment:
+      EGWA_DB_PATH: /app/data/evidence_gated.db
+      EGWA_RATE_LIMIT: "60"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)",
+        ]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    # NOTE: no named volume on purpose. The public demo's SQLite data is
+    # ephemeral and must not be presented as durable audit storage.

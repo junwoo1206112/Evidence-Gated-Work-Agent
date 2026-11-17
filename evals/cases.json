@@ -1,0 +1,327 @@
+{
+  "version": "1.0.0",
+  "corpus_version": "1.0.0",
+  "description": "EG-01~EG-14 고정 평가. 모든 케이스는 네트워크·API 키 없이 임시 SQLite에서 실행된다.",
+  "cases": [
+    {
+      "id": "EG-01",
+      "title": "충분한 근거 → 계획 생성, 승인 대기",
+      "split": "dev",
+      "steps": [
+        {
+          "op": "create",
+          "request": "시설공사 계약보증금과 지연배상금 기준을 확인해 초안을 작성해줘",
+          "demo_mode": "none",
+          "expect": {
+            "http": 201,
+            "status": "PENDING_APPROVAL",
+            "plan": true,
+            "public_valid_min": 2,
+            "gate_category": null
+          }
+        },
+        {
+          "op": "rows",
+          "expect": { "plans": 1, "approvals": 0, "executions": 0 }
+        }
+      ]
+    },
+    {
+      "id": "EG-02",
+      "title": "부족한 근거 → 계획 없음",
+      "split": "dev",
+      "steps": [
+        {
+          "op": "create",
+          "request": "우주발사체 발사보험 면책 특약과 발사허가 절차를 정리해줘",
+          "demo_mode": "none",
+          "expect": {
+            "http": 201,
+            "status": "EVIDENCE_INSUFFICIENT",
+            "plan": false,
+            "gate_category": "low_score"
+          }
+        },
+        {
+          "op": "rows",
+          "expect": { "plans": 0, "approvals": 0, "executions": 0 }
+        }
+      ]
+    },
+    {
+      "id": "EG-03",
+      "title": "빈 질의 → 검증 오류, run 생성 없음",
+      "split": "dev",
+      "steps": [
+        {
+          "op": "create",
+          "request": "   ",
+          "demo_mode": "none",
+          "expect": { "http": 422, "code": "E_VALIDATION", "no_run": true }
+        }
+      ]
+    },
+    {
+      "id": "EG-04",
+      "title": "URL 없는 인용 → 게이트 차단",
+      "split": "dev",
+      "steps": [
+        {
+          "op": "create",
+          "request": "무효 URL 테스트 조항",
+          "demo_mode": "none",
+          "expect": {
+            "http": 201,
+            "status": "EVIDENCE_INSUFFICIENT",
+            "plan": false,
+            "gate_category": "invalid_citation",
+            "gate_reason_contains": "출처 URL"
+          }
+        },
+        {
+          "op": "rows",
+          "expect": { "plans": 0, "approvals": 0, "executions": 0 }
+        }
+      ]
+    },
+    {
+      "id": "EG-05",
+      "title": "낮은 검색 점수 → 게이트 차단",
+      "split": "dev",
+      "steps": [
+        {
+          "op": "create",
+          "request": "우주 발사체 보험 특약 면책 한도 규정",
+          "demo_mode": "none",
+          "expect": {
+            "http": 201,
+            "status": "EVIDENCE_INSUFFICIENT",
+            "plan": false,
+            "gate_category": "low_score"
+          }
+        }
+      ]
+    },
+    {
+      "id": "EG-06",
+      "title": "상충 근거 → 보류 및 사유 기록",
+      "split": "dev",
+      "steps": [
+        {
+          "op": "create",
+          "request": "물품 계약보증금 비율 기준을 확인해줘",
+          "demo_mode": "none",
+          "expect": {
+            "http": 201,
+            "status": "EVIDENCE_INSUFFICIENT",
+            "plan": false,
+            "gate_category": "conflict",
+            "gate_reason_contains": "goods_contract_guarantee_rate"
+          }
+        },
+        {
+          "op": "rows",
+          "expect": { "plans": 0, "approvals": 0, "executions": 0 }
+        }
+      ]
+    },
+    {
+      "id": "EG-07",
+      "title": "승인 전 실행 → 409, execution 없음",
+      "split": "dev",
+      "steps": [
+        {
+          "op": "create",
+          "request": "시설공사 계약보증금과 지연배상금 기준을 확인해 초안을 작성해줘",
+          "demo_mode": "none",
+          "expect": { "http": 201, "status": "PENDING_APPROVAL" }
+        },
+        {
+          "op": "execute",
+          "key": "eval-eg07-key-0001",
+          "expect": { "http": 409, "code": "E_STATE_CONFLICT" }
+        },
+        {
+          "op": "rows",
+          "expect": { "executions": 0 }
+        },
+        {
+          "op": "detail",
+          "expect": { "status": "PENDING_APPROVAL", "audit_has": ["DENIED_EXECUTION"] }
+        }
+      ]
+    },
+    {
+      "id": "EG-08",
+      "title": "승인 뒤 mock 실행 → EXECUTED, 감사 기록",
+      "split": "dev",
+      "steps": [
+        {
+          "op": "create",
+          "request": "시설공사 계약보증금과 지연배상금 기준을 확인해 초안을 작성해줘",
+          "demo_mode": "none",
+          "expect": { "http": 201, "status": "PENDING_APPROVAL" }
+        },
+        { "op": "approve", "expect": { "http": 200, "status": "APPROVED" } },
+        {
+          "op": "execute",
+          "key": "eval-eg08-key-0001",
+          "expect": {
+            "http": 200,
+            "status": "EXECUTED",
+            "attempts": 1,
+            "last_attempt_status": "EXECUTED",
+            "audit_has": ["APPROVAL_GRANTED", "EXECUTION_SUCCEEDED"]
+          }
+        },
+        { "op": "rows", "expect": { "approvals": 1, "executions": 1 } }
+      ]
+    },
+    {
+      "id": "EG-09",
+      "title": "mock 2회 실패 → FAILED, 오류 사유 기록",
+      "split": "holdout",
+      "steps": [
+        {
+          "op": "create",
+          "request": "시설공사 지연배상금 산정 기준과 계약업무 처리 절차를 확인해 알림을 준비해줘",
+          "demo_mode": "fail_twice",
+          "expect": { "http": 201, "status": "PENDING_APPROVAL" }
+        },
+        { "op": "approve", "expect": { "http": 200, "status": "APPROVED" } },
+        {
+          "op": "execute",
+          "key": "eval-eg09-key-0001",
+          "expect": {
+            "http": 200,
+            "status": "FAILED",
+            "attempts": 2,
+            "all_attempts_failed": true,
+            "audit_has": ["EXECUTION_FAILED", "RETRY_SCHEDULED"]
+          }
+        },
+        { "op": "rows", "expect": { "executions": 2 } }
+      ]
+    },
+    {
+      "id": "EG-10",
+      "title": "1회 실패 → 자동 재시도 → EXECUTED, attempt 증가",
+      "split": "holdout",
+      "steps": [
+        {
+          "op": "create",
+          "request": "시설공사 지연배상금 산정 기준과 계약업무 처리 절차를 확인해 알림을 준비해줘",
+          "demo_mode": "fail_once",
+          "expect": { "http": 201, "status": "PENDING_APPROVAL" }
+        },
+        { "op": "approve", "expect": { "http": 200, "status": "APPROVED" } },
+        {
+          "op": "execute",
+          "key": "eval-eg10-key-0001",
+          "expect": {
+            "http": 200,
+            "status": "EXECUTED",
+            "attempts": 2,
+            "first_attempt_status": "FAILED",
+            "last_attempt_status": "EXECUTED",
+            "audit_has": ["RETRY_SCHEDULED", "EXECUTION_SUCCEEDED"]
+          }
+        },
+        { "op": "rows", "expect": { "executions": 2 } }
+      ]
+    },
+    {
+      "id": "EG-11",
+      "title": "중복 idempotency key → 기존 결과 반환",
+      "split": "holdout",
+      "steps": [
+        {
+          "op": "create",
+          "request": "시설공사 계약보증금과 지연배상금 기준을 확인해 초안을 작성해줘",
+          "demo_mode": "none",
+          "expect": { "http": 201, "status": "PENDING_APPROVAL" }
+        },
+        { "op": "approve", "expect": { "http": 200, "status": "APPROVED" } },
+        {
+          "op": "execute",
+          "key": "eval-eg11-key-0001",
+          "expect": { "http": 200, "status": "EXECUTED", "replayed": false }
+        },
+        {
+          "op": "execute",
+          "key": "eval-eg11-key-0001",
+          "expect": { "http": 200, "status": "EXECUTED", "replayed": true, "attempts": 1 }
+        },
+        { "op": "rows", "expect": { "executions": 1 } }
+      ]
+    },
+    {
+      "id": "EG-12",
+      "title": "계획 변조 → plan hash 불일치로 실행 차단",
+      "split": "holdout",
+      "steps": [
+        {
+          "op": "create",
+          "request": "시설공사 계약보증금과 지연배상금 기준을 확인해 초안을 작성해줘",
+          "demo_mode": "none",
+          "expect": { "http": 201, "status": "PENDING_APPROVAL" }
+        },
+        { "op": "approve", "expect": { "http": 200, "status": "APPROVED" } },
+        { "op": "tamper_plan" },
+        {
+          "op": "execute",
+          "key": "eval-eg12-key-0001",
+          "expect": { "http": 409, "code": "E_PLAN_HASH_MISMATCH" }
+        },
+        { "op": "rows", "expect": { "executions": 0 } },
+        {
+          "op": "detail",
+          "expect": { "status": "APPROVED", "audit_has": ["DENIED_EXECUTION"] }
+        }
+      ]
+    },
+    {
+      "id": "EG-13",
+      "title": "중복 승인 → 409, approval 1건 유지",
+      "split": "holdout",
+      "steps": [
+        {
+          "op": "create",
+          "request": "시설공사 계약보증금과 지연배상금 기준을 확인해 초안을 작성해줘",
+          "demo_mode": "none",
+          "expect": { "http": 201, "status": "PENDING_APPROVAL" }
+        },
+        { "op": "approve", "expect": { "http": 200, "status": "APPROVED" } },
+        {
+          "op": "approve",
+          "expect": { "http": 409, "code": "E_STATE_CONFLICT" }
+        },
+        { "op": "rows", "expect": { "approvals": 1, "executions": 0 } }
+      ]
+    },
+    {
+      "id": "EG-14",
+      "title": "반려 → REJECTED, 실행 차단",
+      "split": "holdout",
+      "steps": [
+        {
+          "op": "create",
+          "request": "시설공사 계약보증금과 지연배상금 기준을 확인해 초안을 작성해줘",
+          "demo_mode": "none",
+          "expect": { "http": 201, "status": "PENDING_APPROVAL" }
+        },
+        { "op": "reject", "expect": { "http": 200, "status": "REJECTED" } },
+        {
+          "op": "execute",
+          "key": "eval-eg14-key-0001",
+          "expect": { "http": 409, "code": "E_STATE_CONFLICT" }
+        },
+        { "op": "rows", "expect": { "approvals": 1, "executions": 0 } },
+        {
+          "op": "detail",
+          "expect": { "status": "REJECTED", "audit_has": ["APPROVAL_REJECTED", "DENIED_EXECUTION"] }
+        }
+      ]
+    }
+  ]
+}
