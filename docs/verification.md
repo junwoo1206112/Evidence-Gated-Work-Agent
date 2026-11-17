@@ -134,8 +134,8 @@ docker compose down
 
 | 항목 | 상태 | 이유 |
 |---|---|---|
-| Render Free 라이브 배포 | 미실행 | 계정·공개 URL·사용자 승인 필요. `render.yaml`만 준비 |
-| GitHub push / commit | 별도 릴리스 단계 | 검증 뒤 `Evidence-Gated-Work-Agent` 원격 저장소에 기준 커밋을 생성·푸시한다. |
+| Render Free 라이브 배포 | 완료 | https://evidence-gated-work-agent.onrender.com/ — `/health` 200, 충분 근거·승인 전 409·승인 뒤 mock 실행·근거 부족 차단을 공개 URL에서 확인 |
+| GitHub push / commit | 완료 | `adce011 feat: evidence-gated work agent 초기 구현`을 `main`에 푸시했고 GitHub Actions `verify` 성공 |
 | 실제 조달/메일/결재/파일 실행 | 없음(의도) | mock executor만 존재 |
 | LLM/RAG 품질 수치 | 없음(의도) | 결정론 계약 회귀만 평가 |
 | SQLite 영속 감사 | 없음(의도) | Render/Compose 모두 ephemeral, volume 미사용 |
