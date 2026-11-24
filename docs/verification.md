@@ -11,7 +11,7 @@ python -m pytest -o addopts="" -p no:cacheprovider
 ```
 
 ```text
-151 passed (약 7초)
+156 passed (약 8초)
 ```
 
 구성:
@@ -33,6 +33,7 @@ python -m pytest -o addopts="" -p no:cacheprovider
 | `test_concurrency.py` | 4 | 동시 실행/승인/감사 seq |
 | `test_evals.py` | 4 | 14/14 및 결과 계약 |
 | `test_config.py` | 2 | 설정 hash/기본 임계값 |
+| `test_evaluation_report.py` | 5 | 평가 리포트 API·화면·손상 파일 안전 처리 |
 
 ## 2. 고정 평가
 

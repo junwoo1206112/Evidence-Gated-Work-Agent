@@ -62,5 +62,5 @@ def test_static_files_are_served_with_security_headers(client) -> None:
 def test_verification_doc_is_served(client) -> None:
     response = client.get("/docs/verification")
     assert response.status_code == 200
-    assert "151 passed" in response.text
+    assert "156 passed" in response.text
     assert "Docker E2E" in response.text

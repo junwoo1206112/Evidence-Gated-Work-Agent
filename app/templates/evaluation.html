@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>평가 리포트 · {{ app_name }}</title>
+    <link rel="stylesheet" href="/static/styles.css?v={{ app_version }}" />
+  </head>
+  <body>
+    <a class="skip-link" href="#report">본문으로 건너뛰기</a>
+    <header class="site-header">
+      <div class="wrap header-row">
+        <div>
+          <p class="eyebrow">Evidence-Gated Work Agent</p>
+          <h1>고정 회귀 평가 리포트</h1>
+        </div>
+        <div class="header-meta"><a class="text-link" href="/">데모로 돌아가기</a><a class="text-link" href="/docs/verification">검증 문서</a><a class="text-link" href="/api/evaluation-report">평가 JSON</a></div>
+      </div>
+    </header>
+    <main id="report" class="wrap report-page">
+      {% if not report.report_available %}
+      <section class="card"><h2>리포트를 불러올 수 없습니다</h2><p class="muted">{{ report.reason }}</p></section>
+      {% else %}
+      <section class="notice" role="note"><strong>평가 범위</strong><span>{{ report.scope }}</span></section>
+      <section class="metric-grid" aria-label="평가 요약">
+        <article class="metric-card"><span>고정 평가</span><strong>{{ report.summary.passed }}/{{ report.summary.total }}</strong><small>pass / total</small></article>
+        {% if report.pytest %}<article class="metric-card"><span>전체 회귀 테스트</span><strong>{{ report.pytest.passed }} passed</strong><small>{{ report.pytest.duration }} · 검증 문서 기준</small></article>{% endif %}
+        <article class="metric-card"><span>개발 분할</span><strong>{{ report.splits.dev.passed }}/{{ report.splits.dev.total }}</strong><small>dev</small></article>
+        <article class="metric-card"><span>보류 분할</span><strong>{{ report.splits.holdout.passed }}/{{ report.splits.holdout.total }}</strong><small>holdout</small></article>
+        <article class="metric-card"><span>평가 실패</span><strong>{{ report.summary.failed }}</strong><small>fixed suite only</small></article>
+      </section>
+      <section class="card"><div class="card-head"><div><h2>안전·신뢰성 계약</h2><p>각 수치는 고정 회귀 케이스의 통과 수이며, 운영 환경 비율이 아닙니다.</p></div><span class="badge badge-quiet">고정 결과 생성 시각 (UTC): {{ report.generated_at }}</span></div>
+        <div class="report-list">{% for metric in report.metrics %}<article class="report-row"><div><h3>{{ metric.label }}</h3><p>{{ metric.description }}</p><p class="mono muted">{{ metric.case_ids | join(', ') }}</p></div><strong>{{ metric.passed }}/{{ metric.total }}</strong></article>{% endfor %}</div>
+      </section>
+      <section class="card"><div class="card-head"><div><h2>대표 음성·실패 경로 3개</h2><p>성공 화면만 보여주지 않고, 차단·종료 동작도 회귀 계약으로 확인합니다.</p></div></div>
+        <div class="failure-grid">{% for item in report.negative_cases %}<article class="failure-card"><div class="button-row"><span class="badge {% if item.passed %}badge-valid{% else %}badge-invalid{% endif %}">{{ item.id }} · {% if item.passed %}PASS{% else %}FAIL{% endif %}</span><span class="badge badge-quiet">{{ item.split }}</span></div><h3>{{ item.title }}</h3><p><strong>불변조건:</strong> {{ item.invariant }}</p><p class="small muted"><strong>확인 근거:</strong> {{ item.evidence }}</p>{% if item.failure %}<p class="error-box">{{ item.failure }}</p>{% endif %}</article>{% endfor %}</div>
+      </section>
+      {% if report.retrieval_ablation %}<section class="card"><div class="card-head"><div><h2>검색 구성 비교</h2><p>동일 14문서·18개 수작업 질의의 소규모 설계 비교입니다. 일반 RAG 성능이나 실제 업무 정확도를 뜻하지 않습니다.</p></div></div><div class="table-scroll"><table class="checks-table"><thead><tr><th>변형</th><th>Recall@3</th><th>MRR@3</th></tr></thead><tbody>{% for row in report.retrieval_ablation %}<tr><td>{{ row.variant }}</td><td>{{ row.recall }}</td><td>{{ row.mrr }}</td></tr>{% endfor %}</tbody></table></div></section>{% endif %}
+      <section class="card"><h2>재현성 및 한계</h2><dl class="kv-grid"><div class="kv"><dt>corpus</dt><dd class="mono">{{ report.reproducibility.corpus_sha256 }}</dd></div><div class="kv"><dt>gate config</dt><dd class="mono">{{ report.reproducibility.gate_config_hash }}</dd></div><div class="kv"><dt>cases</dt><dd class="mono">{{ report.reproducibility.cases_sha256 }}</dd></div></dl><p class="small"><a href="/docs/verification">검증 문서</a> · <a href="/api/evaluation-report">평가 JSON</a> · <a href="https://github.com/junwoo1206112/Evidence-Gated-Work-Agent#%EA%B2%80%EC%A6%9D" target="_blank" rel="noopener noreferrer">README 실행 방법</a></p>{% if report.pytest %}<pre class="error-detail">{{ report.pytest.command }}
+python -m evals.run_evals</pre>{% endif %}<ul class="report-limitations">{% for item in report.limitations %}<li>{{ item }}</li>{% endfor %}</ul></section>
+      {% endif %}
+    </main>
+  </body>
+</html>

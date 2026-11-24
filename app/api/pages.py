@@ -7,6 +7,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
 from fastapi.templating import Jinja2Templates
 
 from app.errors import AppError
+from app.services.evaluation_report import build_evaluation_report
 from app.version import APP_NAME, APP_VERSION, DEMO_NOTICE, HONEST_FRAMING
 
 router = APIRouter(tags=["pages"])
@@ -28,6 +29,19 @@ def home(request: Request):
             "app_version": APP_VERSION,
             "demo_notice": DEMO_NOTICE,
             "honest_framing": HONEST_FRAMING,
+        },
+    )
+
+
+@router.get("/evaluation", response_class=HTMLResponse)
+def evaluation_page(request: Request):
+    return _templates(request).TemplateResponse(
+        request,
+        "evaluation.html",
+        {
+            "app_name": APP_NAME,
+            "app_version": APP_VERSION,
+            "report": build_evaluation_report(),
         },
     )
 

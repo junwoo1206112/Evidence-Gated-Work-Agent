@@ -16,7 +16,7 @@ def test_readme_contains_honest_framing_and_evidence() -> None:
     readme = text("README.md")
     assert "LLM 없이 결정론적으로 동작하는" in readme
     assert "실제 조달" in readme
-    assert "151 passed" in readme
+    assert "156 passed" in readme
     assert "14/14" in readme
     assert "SQLite" in readme
     assert "소실" in readme or "ephemeral" in readme

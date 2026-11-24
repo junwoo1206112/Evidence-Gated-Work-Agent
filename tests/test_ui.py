@@ -9,7 +9,7 @@ def test_home_page_has_honest_notice_and_presets(client) -> None:
     text = response.text
     assert "실제 조달" in text
     assert "LLM" in text
-    assert "검증: pytest 151" in text
+    assert "검증: pytest 156" in text
     assert "/docs/verification" in text
     script = client.get("/static/app.js").text
     assert "근거가 부족하면" in script

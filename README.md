@@ -14,7 +14,7 @@
 |---|---|
 | **문제** | 승인 없는 실행, 근거 없는 계획, 실패 후 추적 불가를 한 흐름에서 막는 Agent 정책이 필요했다. |
 | **구현** | 결정론 검색 → evidence gate → 제한 JSON 계획 → 사람 승인 → 멱등 mock 실행 → hash chain 감사 타임라인. |
-| **검증** | `pytest` **151 passed**, 고정 평가 **14/14**, 네트워크·API 키 없이 재현. |
+| **검증** | `pytest` **156 passed**, 고정 평가 **14/14**, 네트워크·API 키 없이 재현. |
 | **실행** | `python -m uvicorn app.main:create_app --factory --reload` → `http://127.0.0.1:8000` |
 
 ## 기존 두 프로젝트와의 차이
@@ -83,11 +83,17 @@ python -m evals.run_evals
 
 | 검증 | 결과 | 산출물 |
 |---|---|---|
-| pytest | **151 passed / 약 7초** | unit 80 · integration 67 · concurrency 4 |
+| pytest | **156 passed / 약 8초** | 평가 리포트 API·화면·무결성 테스트를 포함한 전체 회귀 테스트 |
 | 고정 평가 | **14/14** (dev 8, holdout 6) | `evals/results.json`, `evals/results.md` |
 | 브라우저 E2E | **PASS** (Playwright Chromium) | `docs/demo-approval-409.png`, `docs/demo-execution.png` |
 | 코퍼스 | 14문서 (공개 요약 10, 합성 fixture 4) | SHA-256 `9cecefc5…b16a9` |
 | 환경 | Python 3.12.10, Windows, 네트워크·API 키 없음 | 2026-11-17 |
+
+### 평가 리포트
+
+- 앱의 [`/evaluation`](/evaluation) 화면과 [`/api/evaluation-report`](/api/evaluation-report)는 **체크인된 고정 회귀 평가 결과**만 읽어 보여준다. 실행 중 사용자 데이터나 운영 텔레메트리를 집계하지 않는다.
+- 리포트는 14개 전체 분모, dev/holdout 분할, 근거 부족·상충 차단, 승인 전·계획 변조 실행 차단, 재시도·멱등 실행 계약과 대표 음성 경로 3개를 표시한다.
+- 검색 구성 비교는 동일 14문서·18개 수작업 질의에서 `word_exact` → `particle` → `particle+bigram`을 비교한 소규모 설계 근거다. 일반 RAG·LLM 성능 또는 실제 조달 정확도를 뜻하지 않는다.
 
 평가 케이스: 충분 근거, 부족 근거, 빈 질의, URL 누락, 낮은 점수, 상충, 승인 전 실행, 승인 뒤 실행, 2회 실패, 1회 실패→재시도, 중복 idempotency key, 계획 변조, 중복 승인, 반려.
 
@@ -200,7 +206,7 @@ docker compose up --build -d
 | 관측성 | seq 연속 감사, hash chain, 거부 요청 감사, `/health` |
 | 오류 처리 | 멱등 재실행, 자동 1회 재시도, terminal 실패, stale run reconcile |
 | 제품/UX | 2분 단일 흐름, 차단 사유·409 JSON 노출, 접근성 라벨·CSP |
-| 검증 문화 | 151 tests, 14 고정 평가, negative-path 우선, 오프라인 재현 |
+| 검증 문화 | 156 tests, 14 고정 평가, negative-path 우선, 오프라인 재현 |
 
 ## 라이선스
 

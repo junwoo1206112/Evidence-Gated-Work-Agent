@@ -185,6 +185,39 @@ main {
   padding: 22px;
 }
 
+.report-page { padding-bottom: 48px; }
+
+.metric-grid,
+.failure-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+}
+
+.metric-card,
+.failure-card,
+.report-row {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.metric-card { display: grid; gap: 3px; }
+.metric-card span, .metric-card small { color: var(--muted); font-size: 13px; }
+.metric-card strong { font-size: 30px; letter-spacing: -0.04em; color: var(--accent); }
+.report-list { display: grid; gap: 10px; }
+.report-row { display: flex; justify-content: space-between; gap: 18px; align-items: center; }
+.report-row p { color: var(--muted); font-size: 14px; }
+.report-row > strong { font-size: 22px; color: var(--accent); white-space: nowrap; }
+.failure-card { background: var(--panel-2); }
+.failure-card h3 { margin: 10px 0 8px; }
+.report-limitations { margin: 16px 0 0; padding-left: 20px; color: var(--muted); }
+
+@media (max-width: 640px) {
+  .report-row { align-items: flex-start; flex-direction: column; }
+}
+
 .card-head {
   display: flex;
   justify-content: space-between;

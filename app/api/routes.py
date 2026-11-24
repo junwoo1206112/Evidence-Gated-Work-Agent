@@ -3,6 +3,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Request
 
 from app.api.schemas import ApprovalRequest, CreateRunRequest, ExecutionRequest
+from app.services.evaluation_report import build_evaluation_report
 
 router = APIRouter(prefix="/api", tags=["workflow"])
 
@@ -16,6 +17,12 @@ def create_run(payload: CreateRunRequest, request: Request) -> dict:
 @router.get("/runs/{run_id}")
 def get_run(run_id: str, request: Request) -> dict:
     return request.app.state.service.get_run(run_id)
+
+
+@router.get("/evaluation-report")
+def evaluation_report() -> dict:
+    """Return only committed fixed-suite results; never runtime telemetry."""
+    return build_evaluation_report()
 
 
 @router.post("/runs/{run_id}/approval")
