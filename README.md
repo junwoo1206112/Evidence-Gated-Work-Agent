@@ -8,6 +8,8 @@
 
 🌐 **[라이브 데모 열기](https://evidence-gated-work-agent.onrender.com/)** — Render Free 인스턴스는 유휴 상태 뒤 첫 요청에 초기 지연이 발생할 수 있습니다.
 
+[![verify](https://github.com/junwoo1206112/Evidence-Gated-Work-Agent/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/junwoo1206112/Evidence-Gated-Work-Agent/actions/workflows/ci.yml)
+
 ## 20초 요약
 
 | | |
